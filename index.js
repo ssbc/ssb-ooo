@@ -40,7 +40,7 @@ exports.init = function (sbot, config) {
       store.keys.get(key, function (err, data) {
         if(data) cb(null, data.value)
         else
-          sbot.get(key, function (err, msg) {
+          sbot.get({id:key, raw: true}, function (err, msg) {
             cb(null, msg)
           })
       })
@@ -50,6 +50,27 @@ exports.init = function (sbot, config) {
         cb()
       else cb(null, msg)
     }
+  })
+
+  function get (id, cb) {
+    gq.query(id, function (err, msg) {
+      if(err) return cb(err)
+      store.add(msg, function (err, data) {
+        cb(null, data)
+      })
+    })
+  }
+
+  sbot.get.hook(function (fn, args) {
+    var id = args[0]
+    var cb = args[1]
+    if(id.raw) fn(id.id, cb)
+    else
+      fn(id, function (err, value) {
+        console.log("GOT", id, err, value)
+        if(!err) cb(null, value)
+        else get(id, cb)
+      })
   })
 
   sbot.on('rpc:connect', function (rpc, isClient) {
@@ -65,14 +86,7 @@ exports.init = function (sbot, config) {
       //called by muxrpc, so remote id is set as this.id
       return gq.createStream(this.id)
     },
-    get: function (id, cb) {
-      gq.query(id, function (err, msg) {
-        if(err) return cb(err)
-        store.add(msg, function (err, data) {
-          cb(null, data)
-        })
-      })
-    }
+    get: get
   }
 }
 
