@@ -12,6 +12,7 @@
     "flumedb": "^0.4.2",
     "flumelog-offset": "^3.2.5",
     "flumeview-hashtable": "^1.0.2",
+    "gossip-query": "0.0.0",
     "mkdirp": "^0.5.1",
     "pull-stream": "^3.6.1",
     "ssb-keys": "^7.0.12"
