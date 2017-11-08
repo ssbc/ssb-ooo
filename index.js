@@ -67,14 +67,12 @@ exports.init = function (sbot, config) {
     if(id.raw) fn(id.id, cb)
     else
       fn(id, function (err, value) {
-        console.log("GOT", id, err, value)
         if(!err) cb(null, value)
         else get(id, cb)
       })
   })
 
   sbot.on('rpc:connect', function (rpc, isClient) {
-    console.log('CONNECT...', id.substring(0, 5), rpc.id.substring(0, 5))
     if(isClient) {
       var stream = gq.createStream(rpc.id)
       pull(stream, rpc.ooo.stream(function () {}), stream)
@@ -89,4 +87,6 @@ exports.init = function (sbot, config) {
     get: get
   }
 }
+
+
 
