@@ -56,6 +56,7 @@ exports.init = function (sbot, config) {
     gq.query(id, function (err, msg) {
       if(err) return cb(err)
       store.add(msg, function (err, data) {
+        data.ooo = true
         cb(null, data)
       })
     })
@@ -68,8 +69,19 @@ exports.init = function (sbot, config) {
     else
       fn(id, function (err, value) {
         if(!err) cb(null, value)
-        else get(id, cb)
+        else get(id, function (err, data) {
+          if(err) cb(err)
+          else cb(null, data.value)
+        })
       })
+  })
+
+  sbot.status.hook(function (fn, args) {
+    var status = fn()
+    status.ooo = {}
+    for(var id in gq.state)
+      status.ooo[id] = gq.state[id]
+    return status
   })
 
   sbot.on('rpc:connect', function (rpc, isClient) {
@@ -87,6 +99,4 @@ exports.init = function (sbot, config) {
     get: get
   }
 }
-
-
 
