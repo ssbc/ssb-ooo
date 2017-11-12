@@ -15,7 +15,8 @@
     "gossip-query": "^0.2.1",
     "mkdirp": "^0.5.1",
     "pull-stream": "^3.6.1",
-    "ssb-keys": "^7.0.12"
+    "ssb-keys": "^7.0.12",
+    "ssb-ref": "^2.7.1"
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
