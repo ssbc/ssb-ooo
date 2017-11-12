@@ -1,6 +1,6 @@
 {
   "name": "ssb-ooo",
-  "description": "",
+  "description": "gossip requests for out-of-order messages on ssb",
   "version": "1.0.4",
   "homepage": "https://github.com/dominictarr/ssb-ooo",
   "repository": {
