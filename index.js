@@ -1,7 +1,7 @@
 var pull = require('pull-stream')
 var GQ = require('gossip-query')
 var hash = require('ssb-keys/util').hash
-
+var ref = require('ssb-ref')
 function getId(msg) {
   return '%'+hash(JSON.stringify(msg, null, 2))
 }
@@ -36,6 +36,13 @@ exports.init = function (sbot, config) {
   store = Store(config)
 
   var gq = GQ({
+    isQuery: ref.isMsg,
+    isRequest: function (n) {
+      return Number.isInteger(n) && n < 0
+    },
+    isResponse: function (o) {
+      return o && isObject(o)
+    },
     check: function (key, cb) {
       store.keys.get(key, function (err, data) {
         if(data) cb(null, data.value)
@@ -83,6 +90,13 @@ exports.init = function (sbot, config) {
       status.ooo[id] = gq.state[id]
     return status
   })
+
+  sbot.progress.hook(function (fn, args) {
+    var prog = fn()
+    prog.ooo = gq.progress()
+    return prog
+  })
+
 
   sbot.on('rpc:connect', function (rpc, isClient) {
     if(isClient) {
