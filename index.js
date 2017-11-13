@@ -2,8 +2,13 @@ var pull = require('pull-stream')
 var GQ = require('gossip-query')
 var hash = require('ssb-keys/util').hash
 var ref = require('ssb-ref')
+
 function getId(msg) {
   return '%'+hash(JSON.stringify(msg, null, 2))
+}
+
+function isObject (o) {
+  return o && 'object' === typeof o
 }
 
 var Store = require('./store')
