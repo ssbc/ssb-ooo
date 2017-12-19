@@ -1,7 +1,7 @@
 var pull = require('pull-stream')
 var GQ = require('gossip-query')
 var hash = require('ssb-keys/util').hash
-var ref = require('ssb-ref')
+var isMsg = require('ssb-ref').isMsg
 
 function getId(msg) {
   return '%'+hash(JSON.stringify(msg, null, 2))
@@ -17,7 +17,6 @@ var log = console.error
 console.error = function (m) {
   log(new Error('---------------').stack)
   log(m)
-
 }
 
 exports.name = 'ooo'
@@ -41,7 +40,7 @@ exports.init = function (sbot, config) {
   store = Store(config)
 
   var gq = GQ({
-    isQuery: ref.isMsg,
+    isQuery: isMsg,
     isRequest: function (n) {
       return Number.isInteger(n) && n < 0
     },
@@ -56,6 +55,9 @@ exports.init = function (sbot, config) {
             cb(null, msg)
           })
       })
+    },
+    isUpdate: function (id, msg, value) {
+      return value == null && getId(msg) == id
     },
     process: function (id, msg, cb) {
       if(id !== getId(msg))
@@ -77,7 +79,8 @@ exports.init = function (sbot, config) {
   sbot.get.hook(function (fn, args) {
     var id = args[0]
     var cb = args[1]
-    if(id.raw) fn(id.id, cb)
+    if(!isMsg(id.id || id)) return cb(new Error('not a message id:' + (id.id || id)))
+    if(id.raw && isMsg(id.id)) fn(id.id, cb)
     else
       fn(id, function (err, value) {
         if(!err) cb(null, value)
@@ -91,8 +94,14 @@ exports.init = function (sbot, config) {
   sbot.status.hook(function (fn, args) {
     var status = fn()
     status.ooo = {}
-    for(var id in gq.state)
-      status.ooo[id] = gq.state[id]
+    for(var id in gq.state) {
+      var v = gq.state[id]
+      if(!v.value)
+        status.ooo[id] = {
+          state: v.state,
+          weight: v.weight
+        }
+    }
     return status
   })
 
