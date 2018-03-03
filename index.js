@@ -12,12 +12,7 @@ function isObject (o) {
 }
 
 var Store = require('./store')
-var log = console.error
-
-console.error = function (m) {
-  log(new Error('---------------').stack)
-  log(m)
-}
+//var log = console.error
 
 exports.name = 'ooo'
 exports.version = '1.0.0'
@@ -79,7 +74,9 @@ exports.init = function (sbot, config) {
   sbot.get.hook(function (fn, args) {
     var id = args[0]
     var cb = args[1]
-    if(!isMsg(id.id || id)) return cb(new Error('not a message id:' + (id.id || id)))
+    if(!isMsg(id.id || id))
+      return fn.apply(this, args)
+      //return cb(new Error('not a message id:' + (id.id || id)))
     if(id.raw && isMsg(id.id)) fn(id.id, cb)
     else
       fn(id, function (err, value) {
@@ -127,4 +124,5 @@ exports.init = function (sbot, config) {
     get: get
   }
 }
+
 
