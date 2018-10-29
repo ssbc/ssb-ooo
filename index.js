@@ -12,7 +12,6 @@ function isObject (o) {
 }
 
 var Store = require('./store')
-//var log = console.error
 
 exports.name = 'ooo'
 exports.version = '1.0.0'
@@ -32,6 +31,8 @@ var ViewHashtable = require('flumeview-hashtable')
 exports.init = function (sbot, config) {
   var id = sbot.id
 
+  var conf = config.ooo || {}
+
   store = Store(config)
 
   var gq = GQ({
@@ -46,7 +47,7 @@ exports.init = function (sbot, config) {
       store.keys.get(key, function (err, data) {
         if(data) cb(null, data.value)
         else
-          sbot.get({id:key, raw: true}, function (err, msg) {
+          sbot.get({id:key, ooo: false}, function (err, msg) {
             cb(null, msg)
           })
       })
@@ -61,32 +62,43 @@ exports.init = function (sbot, config) {
     }
   })
 
-  function get (id, cb) {
+  function get (opts, cb) {
+    var id = isMsg(opts) ? opts : opts.id
+    var timeout = conf.timeout == null ? 5000 : conf.timeout
+    var timer
+    if(timeout > 0)
+      timer = setTimeout(function () {
+        var _cb = cb
+        cb = null
+        _cb(new Error('ooo.get: took more than timeout:'+timeout))
+      }, timeout)
+
     gq.query(id, function (err, msg) {
       if(err) return cb(err)
       store.add(msg, function (err, data) {
         data.ooo = true
-        cb(null, data)
+        clearTimeout(timer)
+        cb && cb(null, data)
       })
     })
   }
 
-  sbot.get.hook(function (fn, args) {
-    var id = args[0]
-    var cb = args[1]
-    if(!isMsg(id.id || id))
-      return fn.apply(this, args)
-      //return cb(new Error('not a message id:' + (id.id || id)))
-    if(id.raw && isMsg(id.id)) fn(id.id, cb)
-    else
-      fn(id, function (err, value) {
-        if(!err) cb(null, value)
-        else get(id, function (err, data) {
-          if(err) cb(err)
-          else cb(null, data.value)
+  if(conf.hook !== false)
+    sbot.get.hook(function (fn, args) {
+      var id = args[0]
+      var cb = args[1]
+      if(!isMsg(id.id || id))
+        return fn.apply(this, args)
+      if(id.ooo === false && isMsg(id.id)) fn(id, cb)
+      else
+        fn(id, function (err, value) {
+          if(!err) cb(null, value)
+          else get(id, function (_err, data) {
+            if(_err) fn(id, cb) //just in-case, try the log again
+            else cb(null, data.value)
+          })
         })
-      })
-  })
+    })
 
   sbot.status.hook(function (fn, args) {
     var status = fn()
@@ -124,5 +136,4 @@ exports.init = function (sbot, config) {
     get: get
   }
 }
-
 
