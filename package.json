@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
-    "scuttlebot": "^13.0.2",
+    "ssb-server": "^14.0.4",
     "tape": "^4.8.0"
   },
   "scripts": {
@@ -29,3 +29,4 @@
   "author": "'Dominic Tarr' <dominic.tarr@gmail.com> (dominictarr.com)",
   "license": "MIT"
 }
+
