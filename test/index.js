@@ -2,12 +2,9 @@ var tape = require('tape')
 var ssbKeys = require('ssb-keys')
 var path = require('path')
 var rmrf = require('rimraf')
-var createSbot = require('scuttlebot')
-  .use(require('../')) //
 
-//  .use(require('ssb-friends'))
-//  .use(require('../plugins/gossip'))
-//  .use(require('../plugins/logging'))
+var createSbot = require('ssb-server')
+  .use(require('..'))
 
 var alice = createSbot({
   temp: 'ooo_a',
@@ -86,4 +83,7 @@ tape('reopen', function (t) {
     })
   })
 })
+
+
+
 

@@ -2,8 +2,9 @@ var tape = require('tape')
 var ssbKeys = require('ssb-keys')
 var path = require('path')
 var rmrf = require('rimraf')
-var createSbot = require('scuttlebot')
-  .use(require('../'))
+
+var createSbot = require('ssb-server')
+  .use(require('..'))
 
 var alice = createSbot({
   temp: 'ooo_a',
@@ -37,6 +38,7 @@ tape('connect', function (t) {
     })
   })
 })
+
 
 
 
