@@ -59,7 +59,8 @@ exports.init = function (sbot, config) {
       if(id !== getId(msg))
         cb()
       else cb(null, msg)
-    }
+    },
+    timeout: conf.timeout || 30e3
   })
 
   function get (opts, cb) {
