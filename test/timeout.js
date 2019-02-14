@@ -20,19 +20,21 @@ var bob = createSbot({
 })
 
 tape('connect', function (t) {
-  bob.publish({type: 'test', ooo: true}, function (err, msg) {
-    console.log(msg)
-    var ts = Date.now()
-    alice.ooo.get({id:msg.key, timeout: 1000}, function (err) {
-      t.ok(err)
-      t.ok(Date.now() > ts + 1000)
-      alice.connect(bob.getAddress(), function () {
-        alice.ooo.get({id:msg.key, timeout: 1000}, function (err, _data) {
-          if(err) throw err
-          t.deepEqual(_data.value, msg.value)
-          alice.close()
-          bob.close()
-          t.end()
+  bob.once('multiserver:listening', function () {
+    bob.publish({type: 'test', ooo: true}, function (err, msg) {
+      console.log(msg)
+      var ts = Date.now()
+      alice.ooo.get({id:msg.key, timeout: 1000}, function (err) {
+        t.ok(err)
+        t.ok(Date.now() > ts + 1000)
+        alice.connect(bob.getAddress(), function () {
+          alice.ooo.get({id:msg.key, timeout: 1000}, function (err, _data) {
+            if(err) throw err
+            t.deepEqual(_data.value, msg.value)
+            alice.close()
+            bob.close()
+            t.end()
+          })
         })
       })
     })

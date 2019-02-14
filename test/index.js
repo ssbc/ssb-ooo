@@ -33,6 +33,13 @@ var carol = createSbot({
 
 var m1, m2
 
+tape('ready', function (t) {
+  bob.once('multiserver:listening', function () {
+    t.end()
+  })
+
+})
+
 tape('connect', function (t) {
   alice.connect(bob.getAddress(), function (err) {
     if(err) throw err
