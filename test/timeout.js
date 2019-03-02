@@ -9,12 +9,14 @@ var createSbot = require('ssb-server')
 var alice = createSbot({
   temp: 'ooo_a',
   timeout: 1000,
+  host: 'localhost',
   port: 34597,
   keys: ssbKeys.generate()
 })
 var bob = createSbot({
   temp: 'ooo_b',
   timeout: 1000,
+  host: 'localhost',
   port: 34598,
   keys: ssbKeys.generate()
 })
