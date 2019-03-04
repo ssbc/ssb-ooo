@@ -1,7 +1,6 @@
 var tape = require('tape')
 var ssbKeys = require('ssb-keys')
 var path = require('path')
-var rmrf = require('rimraf')
 
 var createSbot = require('ssb-server')
   .use(require('..'))
@@ -16,7 +15,7 @@ var bob = createSbot({
   temp: 'ooo_b',
   timeout: 1000,
   port: 34598,
-  host: 'localhost', timeout: 20001,
+  host: 'localhost',
   replicate: {hops: 3, legacy: false},
   keys: ssbKeys.generate()
 })

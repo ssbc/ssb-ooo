@@ -1,7 +1,5 @@
 var tape = require('tape')
 var ssbKeys = require('ssb-keys')
-var path = require('path')
-var rmrf = require('rimraf')
 
 var createSbot = require('ssb-server')
   .use(require('..'))
