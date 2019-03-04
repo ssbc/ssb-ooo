@@ -1,25 +1,24 @@
 var tape = require('tape')
 var ssbKeys = require('ssb-keys')
-var path = require('path')
-var rmrf = require('rimraf')
 
 var createSbot = require('ssb-server')
   .use(require('..'))
 
-var alice = createSbot({
-  temp: 'ooo_a',
-  timeout: 1000,
-  port: 34597,
-  keys: ssbKeys.generate()
-})
-var bob = createSbot({
-  temp: 'ooo_b',
-  timeout: 1000,
-  port: 34598,
-  keys: ssbKeys.generate()
-})
 
 tape('connect', function (t) {
+  var alice = createSbot({
+    temp: 'ooo_a',
+    timeout: 1000,
+    port: 34597,
+    keys: ssbKeys.generate()
+  })
+  var bob = createSbot({
+    temp: 'ooo_b',
+    timeout: 1000,
+    port: 34598,
+    keys: ssbKeys.generate()
+  })
+
   bob.once('multiserver:listening', function () {
     bob.publish({type: 'test', ooo: true}, function (err, msg) {
       console.log(msg)
