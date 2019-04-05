@@ -17,7 +17,8 @@ exports.name = 'ooo'
 exports.version = '1.0.0'
 exports.manifest = {
   stream: 'duplex',
-  get: 'async'
+  get: 'async',
+  help: 'sync'
 }
 exports.permissions = {
   anonymous: {allow: ['stream']}
@@ -65,7 +66,7 @@ exports.init = function (sbot, config) {
 
   function get (opts, cb) {
     var id = isMsg(opts) ? opts : opts.id
-    var timeout = conf.timeout == null ? 5000 : conf.timeout
+    var timeout = opts.timeout != null ? opts.timeout : conf.timeout == null ? 5000 : conf.timeout
     var timer
     if(timeout > 0)
       timer = setTimeout(function () {
@@ -134,7 +135,10 @@ exports.init = function (sbot, config) {
       //called by muxrpc, so remote id is set as this.id
       return gq.createStream(this.id)
     },
-    get: get
+    get: get,
+    help: function () {
+      return require('./help')
+    }
   }
 }
 
