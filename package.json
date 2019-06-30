@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
-    "ssb-server": "^14.0.4",
+    "ssb-server": "^15.0.2",
     "tape": "^4.8.0"
   },
   "scripts": {
