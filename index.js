@@ -24,11 +24,6 @@ exports.permissions = {
   anonymous: {allow: ['stream']}
 }
 
-var Flume = require('flumedb')
-var OffsetLog = require('flumelog-offset')
-var mkdirp = require('mkdirp')
-var ViewHashtable = require('flumeview-hashtable')
-
 exports.init = function (sbot, config) {
   var id = sbot.id
 
@@ -141,4 +136,3 @@ exports.init = function (sbot, config) {
     }
   }
 }
-
