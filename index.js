@@ -92,7 +92,7 @@ exports.init = function (sbot, config) {
           if(!err) cb(null, value)
           else get(id, function (_err, data) {
             if(_err) fn(id, cb) //just in-case, try the log again
-            else cb(null, data.value)
+            else cb(null, id.meta === true ? data : data.value)
           })
         })
     })
