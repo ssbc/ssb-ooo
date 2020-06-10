@@ -2,6 +2,7 @@ var pull = require('pull-stream')
 var GQ = require('gossip-query')
 var hash = require('ssb-keys/util').hash
 var isMsg = require('ssb-ref').isMsg
+var checkInvalidOOO = require('ssb-validate').checkInvalidOOO
 
 function getId(msg) {
   return '%'+hash(JSON.stringify(msg, null, 2))
@@ -52,7 +53,7 @@ exports.init = function (sbot, config) {
       return value == null && getId(msg) == id
     },
     process: function (id, msg, cb) {
-      if(id !== getId(msg))
+      if(id !== getId(msg) || checkInvalidOOO(msg, null))
         cb()
       else cb(null, msg)
     },
