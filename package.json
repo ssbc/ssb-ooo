@@ -15,7 +15,8 @@
     "mkdirp": "^0.5.1",
     "pull-stream": "^3.6.14",
     "ssb-keys": "^7.2.0",
-    "ssb-ref": "^2.13.3"
+    "ssb-ref": "^2.13.3",
+    "ssb-validate": "^4.1.0"
   },
   "devDependencies": {
     "flumedb": "^2.1.0",
