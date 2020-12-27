@@ -1,6 +1,8 @@
 var tape = require('tape')
 var ssbKeys = require('ssb-keys')
 var path = require('path')
+const {pull, collect} = require('pull-stream')
+const Store = require('../store')
 
 var createSbot = require('ssb-server')
   .use(require('..'))
@@ -71,7 +73,6 @@ tape('connect', function (t) {
   })
 })
 
-
 tape('reopen', function (t) {
   var carol = createSbot({
     path: carol_path,
@@ -90,6 +91,18 @@ tape('reopen', function (t) {
   })
 })
 
-
-
-
+tape('no duplicate entries in log after multiple queries for a message', function (t) {
+  store = Store({path: carol_path})
+  pull(
+    store.stream(),
+    collect((err, ary) => {
+      if (err) throw err
+      // store should still only have two entries
+      // and no dupes
+      t.ok(ary.length === 2, 'only two ooo messages')
+      t.deepEquals(ary[0].value.value, m1.value)
+      t.deepEquals(ary[1].value.value, m2.value)
+      t.end()
+    })
+  )
+})
