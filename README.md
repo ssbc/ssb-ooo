@@ -1,6 +1,6 @@
 # ssb-ooo
 
-retrive ssb messages Out Of Order.
+retrieve ssb messages Out Of Order.
 
 ## overview
 
