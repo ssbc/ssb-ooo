@@ -82,6 +82,11 @@ exports.init = function (sbot, config) {
   }
 
   if(conf.hook !== false)
+    var closed = false
+    sbot.close.hook(function (fn, args) {
+      closed = true
+      return fn.apply(this, args)
+    })
     sbot.get.hook(function (fn, args) {
       var id = args[0]
       var cb = args[1]
@@ -90,9 +95,13 @@ exports.init = function (sbot, config) {
       if(id.ooo === false && isMsg(id.id)) fn(id, cb)
       else
         fn(id, function (err, value) {
-          if(!err) cb(null, value)
-          else get(id, function (_err, data) {
-            if(_err) fn(id, cb) //just in-case, try the log again
+          if(!err) return cb(null, value)
+          if (closed) return cb(err)
+          get(id, function (_err, data) {
+            if(_err) {
+              if (!closed) fn(id, cb) //just in-case, try the log again
+              else cb(_err)
+            }
             else cb(null, id.meta === true ? data : data.value)
           })
         })
