@@ -25,9 +25,10 @@ exports.permissions = {
   anonymous: {allow: ['stream']}
 }
 
-exports.init = function (sbot, config) {
-  var id = sbot.id
+// for some reason this can not be inside 'init'
+var oooAddQueue ={}
 
+exports.init = function (sbot, config) {
   var conf = config.ooo || {}
 
   store = Store(config)
@@ -45,6 +46,7 @@ exports.init = function (sbot, config) {
         if(data) cb(null, data.value)
         else
           sbot.get({id:key, ooo: false}, function (err, msg) {
+            if (msg) oooAddQueue[key] = msg
             cb(null, msg)
           })
       })
@@ -73,11 +75,16 @@ exports.init = function (sbot, config) {
 
     gq.query(id, function (err, msg) {
       if(err) return cb(err)
-      store.add(msg, function (err, data) {
-        data.ooo = true
-        clearTimeout(timer)
-        cb && cb(null, data)
-      })
+      if (oooAddQueue[id]) {
+        return store.add(msg, function (err, data) {
+          delete oooAddQueue[id]
+          data.ooo = true
+          clearTimeout(timer)
+          cb && cb(null, data)
+        })
+      }
+      clearTimeout(timer)
+      return cb && cb(null, {key: id, value: msg})
     })
   }
 
@@ -137,3 +144,4 @@ exports.init = function (sbot, config) {
     }
   }
 }
+
